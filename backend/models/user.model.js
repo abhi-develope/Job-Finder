@@ -33,12 +33,12 @@ const userSchema = new mongoose.Schema({
         skills: [{type: String}],
         resume: {type: String}, // url to resume
         resumeOriginalName: {type: String},
-        company: {type:mongoose.Schema.Types.ObjectId, ref:'company'},
+        company: {type:mongoose.Schema.Types.ObjectId, ref:'Company'},
         profilePhoto: {
             type: String,
             default: ""
         }
     },
-}, {timestamps:trusted})
+}, {timestamps:true})
 
 export const User = mongoose.model('User', userSchema);
