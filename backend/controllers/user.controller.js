@@ -83,24 +83,31 @@ export const logout = async  (req, res)=>{
 export const profileUpdate = async (req, res) => {
    try {
     const {name, email, bio, skills, phone} = req.body;
-    if(!name || !email || !bio || !skills || !phone){
-       return res.status(400).json({message: "all fields are required", success: false})
-    }
-
-    const skillsArray = skills.split(", ");
+   
+    let skillsArray;
+   
+        if (typeof skills === "string") {
+          // If skills is a string, split it by commas
+          skillsArray = skills.split(", ");
+        } else if (Array.isArray(skills)) {
+          // If skills is already an array, use it as is
+          skillsArray = skills;
+        }
     const userId = req.id // middleware authentication
-    const user = User.findOne(userId);
+    const user = await User.findOne(userId);
 
     if(!user){
         res.status(400).json({message: "user not found", success: "false"})
     }
 
     //updating data
-    user.name = name;
-    user.email = email;
-    user.profile.skills = skillsArray;
-    user.phone = phone;
-    user.profile.bio = bio;
+    if(name)  user.name = name;
+    if(phone)  user.phone = phone;
+    if(email)  user.email = email;
+    if(bio)  user.profile.bio = bio;
+    if(skills)  user.profile.skills = skillsArray;
+   
+
 
     await user.save();
     res.status(200).json({message: "user information updated successfully", 

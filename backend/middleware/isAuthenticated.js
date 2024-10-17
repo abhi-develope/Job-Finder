@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-export const verifyToken = (req, res, next) => {
+export const isAuthenticated = (req, res, next) => {
     const token = req.cookies.jobToken;
     if(!token) return res.status(401).json({error: "unauthorized - no token provided"})
         try {
