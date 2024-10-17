@@ -5,11 +5,10 @@ export const generateTokenAndCookie = (res, userId) =>{
         expiresIn: "7d",
     });
 
-    res.cookie("jobToken", jobToken, {
-        httpOnly:true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: 7*24*60*1000,
+    res.cookie("jobToken", token, {
+        httpOnly: true, // xxs
+        secure: true,
+        sameSite: "strict" //csrf
     })
 
     return token;

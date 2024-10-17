@@ -1,5 +1,6 @@
 import { User } from "../models/user.model.js";
 import { generateTokenAndCookie } from "../utils/jwtToken.js";
+import bcrypt from "bcrypt"
 
 export const signup = async (req, res)=> {
     try {
@@ -24,13 +25,13 @@ export const signup = async (req, res)=> {
         })
 
         await user.save();
+        generateTokenAndCookie(res, user._id);
         res.status(200).json({message: "signup   successfully", success:true,
             user: {
                 ...user._doc,
                 password: undefined,
             },
         })
-        generateTokenAndCookie(res, user._id);
 
 
         
@@ -55,6 +56,7 @@ export const login = async (req, res)=>{
         }
 
         await user.save();
+        generateTokenAndCookie(res, user._id);
         res.status(200).json({message: "logged in  successfully", success:true,
             user: {
                 ...user._doc,
@@ -63,8 +65,53 @@ export const login = async (req, res)=>{
         })
 
 
+
     } catch (error) {
         res.status(400).json({error: error.message})
     
     }
+}
+
+
+export const logout = async  (req, res)=>{
+    res.clearCookie("jobToken")
+    res.status(200).json({message: "loggout successfully"});
+}
+
+
+
+export const profileUpdate = async (req, res) => {
+   try {
+    const {name, email, bio, skills, phone} = req.body;
+    if(!name || !email || !bio || !skills || !phone){
+       return res.status(400).json({message: "all fields are required", success: false})
+    }
+
+    const skillsArray = skills.split(", ");
+    const userId = req.id // middleware authentication
+    const user = User.findOne(userId);
+
+    if(!user){
+        res.status(400).json({message: "user not found", success: "false"})
+    }
+
+    //updating data
+    user.name = name;
+    user.email = email;
+    user.profile.skills = skillsArray;
+    user.phone = phone;
+    user.profile.bio = bio;
+
+    await user.save();
+    res.status(200).json({message: "user information updated successfully", 
+        user: {
+            ...user._doc,
+            password: undefined,
+        },})
+    
+   } catch (error) {
+    res.status(400).json({error: error.message})
+
+}
+   
 }
