@@ -1,4 +1,5 @@
 import { User } from "../models/user.model.js";
+import { generateTokenAndCookie } from "../utils/jwtToken.js";
 
 export const signup = async (req, res)=> {
     try {
@@ -23,8 +24,19 @@ export const signup = async (req, res)=> {
         })
 
         await user.save();
+        res.status(200).json({message: "signup   successfully", success:true,
+            user: {
+                ...user._doc,
+                password: undefined,
+            },
+        })
+        generateTokenAndCookie(res, user._id);
+
+
         
     } catch (error) {
+        res.status(400).json({error: error.message})
+    
         
     }
 }
@@ -43,10 +55,16 @@ export const login = async (req, res)=>{
         }
 
         await user.save();
-        res.status(200).json({message: "logged in  successfully", success:true})
+        res.status(200).json({message: "logged in  successfully", success:true,
+            user: {
+                ...user._doc,
+                password: undefined,
+            },
+        })
 
 
     } catch (error) {
-        
+        res.status(400).json({error: error.message})
+    
     }
 }
