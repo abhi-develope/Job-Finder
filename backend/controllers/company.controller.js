@@ -14,7 +14,7 @@ export const registerCompany = async(req, res)=>{
 
         let company = new Company({
             name:companyName,
-            userId: req.Id
+            userId: req.userId
         })
 
         await company.save();
@@ -33,13 +33,16 @@ export const registerCompany = async(req, res)=>{
 
 export const getCompany = async (req, res) => {
     try {
-        const userId = req.id;
-        const companyList = await Company.find(userId);
+        const userId = req.userId;
+        const companyList = await Company.find({userId});
         if(!companyList){
             return res.status(400).json({message: "no company found", success: false})
         }
+        return res.status(200).json({companyList, success: true})
     } catch (error) {
         res.status(400).json({error: error.message})
+        
+        
     }
 }
 
