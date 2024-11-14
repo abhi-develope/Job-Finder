@@ -19,7 +19,7 @@ export const applyJobs = async (req, res) => {
         // check job exist or not 
         const job = await Job.findById(jobId);
         if(!job){
-            return res.status(400).json({message: "job not foun", success: false})
+            return res.status(400).json({message: "job not found", success: false})
         }
 
         // create new application
@@ -71,7 +71,7 @@ export const getApplicant = async (req, res)=> {
         if(!job){
             return res.status(404).json({message: "applicant not found ", success: false})
         }
-        return res.status(200).json({job, success:false})
+        return res.status(200).json({job, success:true})
     } catch (error) {
         res.status(400).json({error: error.message}) 
     }
@@ -94,6 +94,7 @@ export const updateStatus = async (req, res) => {
         // update the status
         application.status = status.toLowerCase();
         await application.save();
+        return res.status(200).json({message: "status updated successfully", success:true})
     } catch (error) {
         res.status(400).json({error: error.message})
     }
